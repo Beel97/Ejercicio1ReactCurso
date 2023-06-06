@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primer  Ejemplo</title>
+</head>
+<body>
+    <div id="root">
+        <script src="https://unpkg.com/react@18/umd/react.development.js">
+        </script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js">
+        </script>  
+
+        <script>
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            var numeroIngrediente = 1
+            const txtForm = (txtNombre)=>{return React.createElement('input',{type:'text',name:txtNombre,placeholder:txtNombre})}
+            const btnFormSubmit = (name) => {return React.createElement('button',{type:'submit'},name)}
+            const btnForm = (name,func) => React.createElement("button",{onClick:func},name)
+            var fmd={}
+            var cmp
+            const Recetas=[]
+
+            const submit = (e) => {
+                numeroIngrediente=1
+                e.preventDefault();
+                fmd=new FormData(e.target)
+                Recetas.push(Object.fromEntries(fmd.entries()))
+                console.log(Object.fromEntries(fmd.entries()))
+                componentesForm=[txtForm("Nombre_Receta"),
+                                    txtForm("Imagen:"),
+                                    txtForm("Ingrediente:"+numeroIngrediente),
+                                    btnForm("Agregar_ingrediente",addTxtBox),
+                                    btnFormSubmit("Agregar_receta")]
+                form = React.createElement('form',{onSubmit:submit},componentesForm)
+                console.log(Recetas)
+                
+                slComp()
+            }
+
+            const addTxtBox=(e)=>{
+                console.log('a')
+                numeroIngrediente+=1
+                componentesForm.splice(numeroIngrediente+1,0,txtForm("Ingrediente:"+numeroIngrediente))
+                form = React.createElement('form',{onSubmit:submit},componentesForm)
+                root.render([form,cmp])
+            }
+
+            ////////////Form
+            
+            ////creacion de form
+            var componentesForm=[txtForm("Nombre_Receta"),
+                                    txtForm("Imagen:"),
+                                    txtForm("Ingrediente:"+numeroIngrediente),
+                                    btnForm("Agregar_ingrediente",addTxtBox),
+                                    btnFormSubmit("Agregar_receta")]
+
+            var form = React.createElement('form',{onSubmit:submit},componentesForm)
+
+            root.render(form)
+
+            
+            const crearLista=(array)=>{
+                
+                return lista = React.createElement("ul", null, array.map((nombre, index) => {
+                    console.log(index,nombre)
+                    if(index!=1 && index!=0){
+                    return React.createElement("li", { key: index }, nombre)
+                    }
+                }))
+                
+            }
+
+            const handleChange = (event) => {
+                console.log(event.target.value);
+                var found = Recetas.find(e => e.Nombre_Receta === event.target.value);
+                crearLista(Object.values(found))
+                const titulo = React.createElement('h1',null,found.Nombre_Receta)
+                const img = React.createElement("img",{src:found["Imagen:"],height:500,width:500,align:"center"})
+
+                root.render([form,cmp,titulo,lista,img])
+            };
+            
+        var slComp =() => {
+            var options=[]
+            Recetas.forEach(element => options.push(React.createElement("option", {value: element.Nombre_Receta}, element.Nombre_Receta)))
+            cmp=React.createElement("select", {onChange:handleChange},options)
+        root.render([form,cmp])}
+
+            
+        </script>
+    </div>
+</body>
+</html>
